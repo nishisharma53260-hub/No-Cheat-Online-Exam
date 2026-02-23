@@ -1,21 +1,39 @@
-export interface ResumeAnalysis {
-  score: number;
-  extractedInfo: {
-    skills: string[];
-    education: string[];
-    certifications: string[];
-    experience: string[];
+export interface StartupAnalysis {
+  scores: {
+    marketNeed: number;
+    valueProposition: number;
+    targetAudience: number;
+    revenueModel: number;
+    scalability: number;
+    innovationLevel: number;
+    overall: number;
   };
-  relevanceAnalysis: string;
-  suggestions: {
-    missingCompetencies: string[];
-    weakSections: string[];
-    optimizationTips: string[];
+  swot: {
+    strengths: string[];
+    weaknesses: string[];
+    opportunities: string[];
+    threats: string[];
   };
-  overallFeedback: string;
+  riskAssessment: {
+    financial: string;
+    operational: string;
+    competitive: string;
+    feasibility: string;
+  };
+  recommendations: {
+    productRefinement: string[];
+    marketPositioning: string[];
+    costOptimization: string[];
+    differentiation: string[];
+    growthPathways: string[];
+  };
+  summary: string;
 }
 
-export interface JobRequirement {
-  title: string;
-  description: string;
+export interface EvaluationRecord {
+  id: number;
+  startup_name: string;
+  proposal_text: string;
+  analysis_json: string;
+  timestamp: string;
 }

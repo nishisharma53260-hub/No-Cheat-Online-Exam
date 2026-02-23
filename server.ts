@@ -11,25 +11,16 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const db = new Database("resume_system.db");
+const db = new Database("startup_evaluator.db");
 
 // Initialize Database
 db.exec(`
-  CREATE TABLE IF NOT EXISTS job_requirements (
+  CREATE TABLE IF NOT EXISTS evaluations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    description TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS screenings (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    candidate_name TEXT NOT NULL,
-    resume_text TEXT NOT NULL,
-    job_id INTEGER NOT NULL,
+    startup_name TEXT NOT NULL,
+    proposal_text TEXT NOT NULL,
     analysis_json TEXT NOT NULL,
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (job_id) REFERENCES job_requirements (id)
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 `);
 
@@ -39,46 +30,43 @@ app.use(express.json());
 const PORT = 3000;
 
 // API Routes
-app.post("/api/jobs", (req, res) => {
-  const { title, description } = req.body;
-  try {
-    const stmt = db.prepare("INSERT INTO job_requirements (title, description) VALUES (?, ?)");
-    const info = stmt.run(title, description);
-    res.status(201).json({ id: info.lastInsertRowid });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to save job requirement" });
-  }
-});
-
-app.get("/api/jobs", (req, res) => {
-  const jobs = db.prepare("SELECT * FROM job_requirements ORDER BY created_at DESC").all();
-  res.json(jobs);
-});
-
-app.post("/api/screenings", (req, res) => {
-  const { candidateName, resumeText, jobId, analysis } = req.body;
+app.post("/api/evaluations", (req, res) => {
+  const { startupName, proposalText, analysis } = req.body;
   try {
     const stmt = db.prepare(
-      "INSERT INTO screenings (candidate_name, resume_text, job_id, analysis_json) VALUES (?, ?, ?, ?)"
+      "INSERT INTO evaluations (startup_name, proposal_text, analysis_json) VALUES (?, ?, ?)"
     );
-    stmt.run(candidateName, resumeText, jobId, JSON.stringify(analysis));
-    res.status(201).json({ message: "Screening saved" });
+    const info = stmt.run(startupName, proposalText, JSON.stringify(analysis));
+    res.status(201).json({ id: info.lastInsertRowid });
   } catch (error) {
-    res.status(500).json({ error: "Failed to save screening" });
+    console.error(error);
+    res.status(500).json({ error: "Failed to save evaluation" });
   }
 });
 
-app.get("/api/screenings", (req, res) => {
-  const screenings = db.prepare(`
-    SELECT s.*, j.title as job_title 
-    FROM screenings s 
-    JOIN job_requirements j ON s.job_id = j.id 
-    ORDER BY s.timestamp DESC
-  `).all();
-  res.json(screenings.map((s: any) => ({
-    ...s,
-    analysis: JSON.parse(s.analysis_json)
-  })));
+app.get("/api/evaluations", (req, res) => {
+  try {
+    const records = db.prepare("SELECT * FROM evaluations ORDER BY timestamp DESC").all();
+    res.json(records);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch evaluations" });
+  }
+});
+
+app.get("/api/evaluations/:id", (req, res) => {
+  const { id } = req.params;
+  try {
+    const record = db.prepare("SELECT * FROM evaluations WHERE id = ?").get(id) as any;
+    if (!record) return res.status(404).json({ error: "Not found" });
+    res.json({
+      ...record,
+      analysis: JSON.parse(record.analysis_json)
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch evaluation" });
+  }
 });
 
 // Vite middleware for development

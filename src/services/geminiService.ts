@@ -1,26 +1,23 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { ResumeAnalysis } from "../types";
+import { StartupAnalysis } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
-export async function analyzeResume(resumeText: string, jobDescription: string): Promise<ResumeAnalysis> {
+export async function analyzeStartupIdea(proposalText: string): Promise<StartupAnalysis> {
   const model = "gemini-3-flash-preview";
   
   const prompt = `
-    Analyze the following resume against the job description.
+    Analyze the following startup business proposal.
     
-    Resume:
-    ${resumeText}
+    Proposal:
+    ${proposalText}
     
-    Job Description:
-    ${jobDescription}
-    
-    Provide a detailed analysis including:
-    1. A suitability score (0-100).
-    2. Extracted info: skills, education, certifications, experience.
-    3. Relevance analysis (how well the candidate fits).
-    4. Personalized improvement suggestions: missing competencies, weak sections, optimization tips.
-    5. Overall feedback.
+    Provide a structured evaluation including:
+    1. Scores (0-100) for: Market Need, Value Proposition, Target Audience, Revenue Model, Scalability, Innovation Level, and an Overall Score.
+    2. A SWOT Analysis: Strengths, Weaknesses, Opportunities, Threats.
+    3. A Risk Assessment: Financial, Operational, Competitive, Feasibility.
+    4. Strategic Recommendations: Product Refinement, Market Positioning, Cost Optimization, Differentiation, Growth Pathways.
+    5. A concise summary of the evaluation.
   `;
 
   const response = await ai.models.generateContent({
@@ -31,30 +28,53 @@ export async function analyzeResume(resumeText: string, jobDescription: string):
       responseSchema: {
         type: Type.OBJECT,
         properties: {
-          score: { type: Type.NUMBER },
-          extractedInfo: {
+          scores: {
             type: Type.OBJECT,
             properties: {
-              skills: { type: Type.ARRAY, items: { type: Type.STRING } },
-              education: { type: Type.ARRAY, items: { type: Type.STRING } },
-              certifications: { type: Type.ARRAY, items: { type: Type.STRING } },
-              experience: { type: Type.ARRAY, items: { type: Type.STRING } },
+              marketNeed: { type: Type.NUMBER },
+              valueProposition: { type: Type.NUMBER },
+              targetAudience: { type: Type.NUMBER },
+              revenueModel: { type: Type.NUMBER },
+              scalability: { type: Type.NUMBER },
+              innovationLevel: { type: Type.NUMBER },
+              overall: { type: Type.NUMBER },
             },
-            required: ["skills", "education", "certifications", "experience"],
+            required: ["marketNeed", "valueProposition", "targetAudience", "revenueModel", "scalability", "innovationLevel", "overall"],
           },
-          relevanceAnalysis: { type: Type.STRING },
-          suggestions: {
+          swot: {
             type: Type.OBJECT,
             properties: {
-              missingCompetencies: { type: Type.ARRAY, items: { type: Type.STRING } },
-              weakSections: { type: Type.ARRAY, items: { type: Type.STRING } },
-              optimizationTips: { type: Type.ARRAY, items: { type: Type.STRING } },
+              strengths: { type: Type.ARRAY, items: { type: Type.STRING } },
+              weaknesses: { type: Type.ARRAY, items: { type: Type.STRING } },
+              opportunities: { type: Type.ARRAY, items: { type: Type.STRING } },
+              threats: { type: Type.ARRAY, items: { type: Type.STRING } },
             },
-            required: ["missingCompetencies", "weakSections", "optimizationTips"],
+            required: ["strengths", "weaknesses", "opportunities", "threats"],
           },
-          overallFeedback: { type: Type.STRING },
+          riskAssessment: {
+            type: Type.OBJECT,
+            properties: {
+              financial: { type: Type.STRING },
+              operational: { type: Type.STRING },
+              competitive: { type: Type.STRING },
+              feasibility: { type: Type.STRING },
+            },
+            required: ["financial", "operational", "competitive", "feasibility"],
+          },
+          recommendations: {
+            type: Type.OBJECT,
+            properties: {
+              productRefinement: { type: Type.ARRAY, items: { type: Type.STRING } },
+              marketPositioning: { type: Type.ARRAY, items: { type: Type.STRING } },
+              costOptimization: { type: Type.ARRAY, items: { type: Type.STRING } },
+              differentiation: { type: Type.ARRAY, items: { type: Type.STRING } },
+              growthPathways: { type: Type.ARRAY, items: { type: Type.STRING } },
+            },
+            required: ["productRefinement", "marketPositioning", "costOptimization", "differentiation", "growthPathways"],
+          },
+          summary: { type: Type.STRING },
         },
-        required: ["score", "extractedInfo", "relevanceAnalysis", "suggestions", "overallFeedback"],
+        required: ["scores", "swot", "riskAssessment", "recommendations", "summary"],
       },
     },
   });
