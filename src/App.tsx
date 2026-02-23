@@ -1,56 +1,62 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Shield, BookOpen, UserCheck, ClipboardList } from 'lucide-react';
+import { FileText, LayoutDashboard, Search, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
-import ExaminerDashboard from './components/ExaminerDashboard';
-import StudentPortal from './components/StudentPortal';
-import ExamRoom from './components/ExamRoom';
+import ResumeScreener from './components/ResumeScreener';
+import RecruiterDashboard from './components/RecruiterDashboard';
 
 function Home() {
   return (
-    <div className="min-h-screen bg-[#f5f5f5] flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-6">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl w-full text-center space-y-8"
+        className="max-w-4xl w-full text-center space-y-12"
       >
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-20 h-20 bg-black rounded-2xl flex items-center justify-center shadow-lg">
-            <Shield className="w-10 h-10 text-white" />
+        <div className="flex flex-col items-center space-y-6">
+          <div className="w-24 h-24 bg-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-indigo-200">
+            <Sparkles className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-5xl font-bold tracking-tight text-zinc-900">
-            Secure Exam System
-          </h1>
-          <p className="text-zinc-500 text-lg max-w-md mx-auto">
-            A controlled environment for automated MCQ examinations with advanced anti-cheating measures.
-          </p>
+          <div className="space-y-2">
+            <h1 className="text-6xl font-black tracking-tight text-slate-900">
+              AI Resume Screener
+            </h1>
+            <p className="text-slate-500 text-xl max-w-2xl mx-auto leading-relaxed">
+              Intelligent resume evaluation and improvement system powered by advanced NLP. 
+              Get instant feedback and suitability scores for any role.
+            </p>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mt-12">
-          <Link to="/examiner">
+        <div className="grid md:grid-cols-2 gap-8 mt-8">
+          <Link to="/screen">
             <motion.div 
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, y: -4 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-white p-8 rounded-3xl shadow-sm border border-zinc-200 text-left cursor-pointer group hover:border-black transition-colors"
+              className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-200 text-left cursor-pointer group hover:border-indigo-600 hover:shadow-xl hover:shadow-indigo-50 transition-all duration-300"
             >
-              <div className="w-12 h-12 bg-zinc-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-black transition-colors">
-                <UserCheck className="w-6 h-6 text-zinc-600 group-hover:text-white" />
+              <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-indigo-600 transition-colors duration-300">
+                <Search className="w-7 h-7 text-slate-600 group-hover:text-white" />
               </div>
-              <h2 className="text-2xl font-semibold mb-2">Examiner Portal</h2>
-              <p className="text-zinc-500">Create exams, upload solution keys, and monitor student results in real-time.</p>
+              <h2 className="text-3xl font-bold mb-3 text-slate-900">Candidate Portal</h2>
+              <p className="text-slate-500 text-lg leading-relaxed">
+                Upload your resume and get a detailed analysis with personalized improvement suggestions.
+              </p>
             </motion.div>
           </Link>
 
-          <Link to="/student">
+          <Link to="/dashboard">
             <motion.div 
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, y: -4 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-white p-8 rounded-3xl shadow-sm border border-zinc-200 text-left cursor-pointer group hover:border-black transition-colors"
+              className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-200 text-left cursor-pointer group hover:border-indigo-600 hover:shadow-xl hover:shadow-indigo-50 transition-all duration-300"
             >
-              <div className="w-12 h-12 bg-zinc-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-black transition-colors">
-                <BookOpen className="w-6 h-6 text-zinc-600 group-hover:text-white" />
+              <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-indigo-600 transition-colors duration-300">
+                <LayoutDashboard className="w-7 h-7 text-slate-600 group-hover:text-white" />
               </div>
-              <h2 className="text-2xl font-semibold mb-2">Student Portal</h2>
-              <p className="text-zinc-500">Join an examination session using a unique code and take your test securely.</p>
+              <h2 className="text-3xl font-bold mb-3 text-slate-900">Recruiter Panel</h2>
+              <p className="text-slate-500 text-lg leading-relaxed">
+                Define job requirements, manage screenings, and perform fast, unbiased candidate evaluations.
+              </p>
             </motion.div>
           </Link>
         </div>
@@ -64,9 +70,8 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/examiner" element={<ExaminerDashboard />} />
-        <Route path="/student" element={<StudentPortal />} />
-        <Route path="/exam/:examId" element={<ExamRoom />} />
+        <Route path="/screen" element={<ResumeScreener />} />
+        <Route path="/dashboard" element={<RecruiterDashboard />} />
       </Routes>
     </Router>
   );

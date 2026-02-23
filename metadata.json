@@ -1,5 +1,5 @@
 {
-  "name": "Secure Exam System",
-  "description": "A secure online examination platform with anti-cheating measures and automated evaluation.",
+  "name": "AI Resume Screener",
+  "description": "Intelligent resume evaluation and improvement system using Gemini AI.",
   "requestFramePermissions": []
 }

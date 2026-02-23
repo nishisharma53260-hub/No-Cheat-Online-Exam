@@ -1,22 +1,21 @@
-export interface Question {
-  text: string;
-  options: string[];
-}
-
-export interface Exam {
-  id: string;
-  title: string;
-  questions: Question[];
-  examinerEmail: string;
-}
-
-export interface ExamResult {
-  id: number;
-  exam_id: string;
-  student_name: string;
-  answers: string[];
+export interface ResumeAnalysis {
   score: number;
-  total_marks: number;
-  status: 'completed' | 'terminated';
-  timestamp: string;
+  extractedInfo: {
+    skills: string[];
+    education: string[];
+    certifications: string[];
+    experience: string[];
+  };
+  relevanceAnalysis: string;
+  suggestions: {
+    missingCompetencies: string[];
+    weakSections: string[];
+    optimizationTips: string[];
+  };
+  overallFeedback: string;
+}
+
+export interface JobRequirement {
+  title: string;
+  description: string;
 }
